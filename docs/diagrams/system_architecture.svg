@@ -1,0 +1,146 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 680" width="1000" height="680" style="background:#0f172a;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+  <defs>
+    <linearGradient id="grad-card" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1e293b"/>
+      <stop offset="100%" stop-color="#243247"/>
+    </linearGradient>
+    <linearGradient id="grad-accent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#818cf8"/>
+    </linearGradient>
+    <marker id="arr" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#38bdf8" />
+    </marker>
+  </defs>
+
+  <!-- Title -->
+  <text x="500" y="45" text-anchor="middle" fill="#f8fafc" font-size="22" font-weight="bold">Requirement Debt Ledger (RDL) - System Architecture</text>
+  <text x="500" y="70" text-anchor="middle" fill="#94a3b8" font-size="13">High-Level 4-Tier Architecture: Presentation, API Router, Mathematical Domain Engines, and Persistent Data</text>
+
+  <!-- Layer 1: Presentation Tier -->
+  <rect x="50" y="100" width="900" height="120" rx="10" fill="url(#grad-card)" stroke="#334155" stroke-width="1.5" />
+  <rect x="50" y="100" width="200" height="28" rx="6" fill="#38bdf8" />
+  <text x="150" y="119" text-anchor="middle" fill="#0f172a" font-size="12" font-weight="bold">PRESENTATION TIER (SPA)</text>
+  
+  <g transform="translate(70, 140)">
+    <!-- Box 1 -->
+    <rect x="0" y="0" width="150" height="65" rx="6" fill="#0f172a" stroke="#38bdf8" stroke-width="1" />
+    <text x="75" y="25" text-anchor="middle" fill="#f8fafc" font-size="12" font-weight="600">Executive Dashboard</text>
+    <text x="75" y="45" text-anchor="middle" fill="#94a3b8" font-size="10">KPIs &amp; SVG Charts</text>
+    <!-- Box 2 -->
+    <rect x="170" y="0" width="150" height="65" rx="6" fill="#0f172a" stroke="#38bdf8" stroke-width="1" />
+    <text x="245" y="25" text-anchor="middle" fill="#f8fafc" font-size="12" font-weight="600">Debt Ledger View</text>
+    <text x="245" y="45" text-anchor="middle" fill="#94a3b8" font-size="10">Search, Filter &amp; Modals</text>
+    <!-- Box 3 -->
+    <rect x="340" y="0" width="150" height="65" rx="6" fill="#0f172a" stroke="#38bdf8" stroke-width="1" />
+    <text x="415" y="25" text-anchor="middle" fill="#f8fafc" font-size="12" font-weight="600">Risk Simulator</text>
+    <text x="415" y="45" text-anchor="middle" fill="#94a3b8" font-size="10">Interactive Math Derivation</text>
+    <!-- Box 4 -->
+    <rect x="510" y="0" width="165" height="65" rx="6" fill="#0f172a" stroke="#38bdf8" stroke-width="1" />
+    <text x="592" y="25" text-anchor="middle" fill="#f8fafc" font-size="12" font-weight="600">Dependency Graph</text>
+    <text x="592" y="45" text-anchor="middle" fill="#94a3b8" font-size="10">Cascade &amp; Cycle Visualizer</text>
+    <!-- Box 5 -->
+    <rect x="695" y="0" width="160" height="65" rx="6" fill="#0f172a" stroke="#38bdf8" stroke-width="1" />
+    <text x="775" y="25" text-anchor="middle" fill="#f8fafc" font-size="12" font-weight="600">Release Gate View</text>
+    <text x="775" y="45" text-anchor="middle" fill="#94a3b8" font-size="10">Readiness &amp; Sign-off</text>
+  </g>
+
+  <!-- Arrow down -->
+  <line x1="500" y1="220" x2="500" y2="255" stroke="#38bdf8" stroke-width="2" marker-end="url(#arr)" />
+
+  <!-- Layer 2: REST API Layer -->
+  <rect x="50" y="260" width="900" height="110" rx="10" fill="url(#grad-card)" stroke="#334155" stroke-width="1.5" />
+  <rect x="50" y="260" width="220" height="28" rx="6" fill="#818cf8" />
+  <text x="160" y="279" text-anchor="middle" fill="#0f172a" font-size="12" font-weight="bold">APPLICATION &amp; ROUTING TIER</text>
+
+  <g transform="translate(70, 300)">
+    <rect x="0" y="0" width="130" height="55" rx="6" fill="#0f172a" stroke="#818cf8" stroke-width="1" />
+    <text x="65" y="24" text-anchor="middle" fill="#f8fafc" font-size="11" font-weight="600">/api/debts</text>
+    <text x="65" y="42" text-anchor="middle" fill="#94a3b8" font-size="9">CRUD &amp; Resolve</text>
+
+    <rect x="145" y="0" width="140" height="55" rx="6" fill="#0f172a" stroke="#818cf8" stroke-width="1" />
+    <text x="215" y="24" text-anchor="middle" fill="#f8fafc" font-size="11" font-weight="600">/api/dependencies</text>
+    <text x="215" y="42" text-anchor="middle" fill="#94a3b8" font-size="9">Graph &amp; Cycle Check</text>
+
+    <rect x="300" y="0" width="130" height="55" rx="6" fill="#0f172a" stroke="#818cf8" stroke-width="1" />
+    <text x="365" y="24" text-anchor="middle" fill="#f8fafc" font-size="11" font-weight="600">/api/reviews</text>
+    <text x="365" y="42" text-anchor="middle" fill="#94a3b8" font-size="9">Governance &amp; Ext</text>
+
+    <rect x="445" y="0" width="140" height="55" rx="6" fill="#0f172a" stroke="#818cf8" stroke-width="1" />
+    <text x="515" y="24" text-anchor="middle" fill="#f8fafc" font-size="11" font-weight="600">/api/release-gates</text>
+    <text x="515" y="42" text-anchor="middle" fill="#94a3b8" font-size="9">Readiness Evaluator</text>
+
+    <rect x="600" y="0" width="125" height="55" rx="6" fill="#0f172a" stroke="#818cf8" stroke-width="1" />
+    <text x="662" y="24" text-anchor="middle" fill="#f8fafc" font-size="11" font-weight="600">/api/analytics</text>
+    <text x="662" y="42" text-anchor="middle" fill="#94a3b8" font-size="9">Metrics &amp; KPIs</text>
+
+    <rect x="740" y="0" width="120" height="55" rx="6" fill="#0f172a" stroke="#818cf8" stroke-width="1" />
+    <text x="800" y="24" text-anchor="middle" fill="#f8fafc" font-size="11" font-weight="600">/api/export</text>
+    <text x="800" y="42" text-anchor="middle" fill="#94a3b8" font-size="9">CSV, JSON, Reset</text>
+  </g>
+
+  <!-- Arrow down -->
+  <line x1="500" y1="370" x2="500" y2="405" stroke="#818cf8" stroke-width="2" marker-end="url(#arr)" />
+
+  <!-- Layer 3: Mathematical Domain Services -->
+  <rect x="50" y="410" width="900" height="120" rx="10" fill="url(#grad-card)" stroke="#334155" stroke-width="1.5" />
+  <rect x="50" y="410" width="220" height="28" rx="6" fill="#34d399" />
+  <text x="160" y="429" text-anchor="middle" fill="#0f172a" font-size="12" font-weight="bold">DOMAIN ENGINES &amp; METHODOLOGY</text>
+
+  <g transform="translate(70, 450)">
+    <rect x="0" y="0" width="160" height="65" rx="6" fill="#0f172a" stroke="#34d399" stroke-width="1" />
+    <text x="80" y="22" text-anchor="middle" fill="#f8fafc" font-size="11" font-weight="600">Risk Engine</text>
+    <text x="80" y="38" text-anchor="middle" fill="#34d399" font-size="9">Base + (1+r)^t Interest</text>
+    <text x="80" y="52" text-anchor="middle" fill="#94a3b8" font-size="8">Overdue Penalties</text>
+
+    <rect x="175" y="0" width="165" height="65" rx="6" fill="#0f172a" stroke="#34d399" stroke-width="1" />
+    <text x="257" y="22" text-anchor="middle" fill="#f8fafc" font-size="11" font-weight="600">Dependency Engine</text>
+    <text x="257" y="38" text-anchor="middle" fill="#34d399" font-size="9">DFS Cycle Detection</text>
+    <text x="257" y="52" text-anchor="middle" fill="#94a3b8" font-size="8">Critical Path &amp; DPI</text>
+
+    <rect x="355" y="0" width="160" height="65" rx="6" fill="#0f172a" stroke="#34d399" stroke-width="1" />
+    <text x="435" y="22" text-anchor="middle" fill="#f8fafc" font-size="11" font-weight="600">Escalation Engine</text>
+    <text x="435" y="38" text-anchor="middle" fill="#34d399" font-size="9">Review &amp; Breach Alerts</text>
+    <text x="435" y="52" text-anchor="middle" fill="#94a3b8" font-size="8">Dynamic Urgency State</text>
+
+    <rect x="530" y="0" width="165" height="65" rx="6" fill="#0f172a" stroke="#34d399" stroke-width="1" />
+    <text x="612" y="22" text-anchor="middle" fill="#f8fafc" font-size="11" font-weight="600">Release Evaluator</text>
+    <text x="612" y="38" text-anchor="middle" fill="#34d399" font-size="9">Gate Capacity Policies</text>
+    <text x="612" y="52" text-anchor="middle" fill="#94a3b8" font-size="8">Critical Blockers Check</text>
+
+    <rect x="710" y="0" width="150" height="65" rx="6" fill="#0f172a" stroke="#34d399" stroke-width="1" />
+    <text x="785" y="22" text-anchor="middle" fill="#f8fafc" font-size="11" font-weight="600">Audit Service</text>
+    <text x="785" y="38" text-anchor="middle" fill="#34d399" font-size="9">Immutable Event Log</text>
+    <text x="785" y="52" text-anchor="middle" fill="#94a3b8" font-size="8">Sign-off Traceability</text>
+  </g>
+
+  <!-- Arrow down -->
+  <line x1="500" y1="530" x2="500" y2="560" stroke="#34d399" stroke-width="2" marker-end="url(#arr)" />
+
+  <!-- Layer 4: Persistent SQLite Database -->
+  <rect x="50" y="565" width="900" height="95" rx="10" fill="url(#grad-card)" stroke="#334155" stroke-width="1.5" />
+  <rect x="50" y="565" width="200" height="26" rx="6" fill="#fbbf24" />
+  <text x="150" y="583" text-anchor="middle" fill="#0f172a" font-size="11" font-weight="bold">PERSISTENCE TIER (SQLITE3)</text>
+
+  <g transform="translate(70, 600)">
+    <rect x="0" y="0" width="160" height="45" rx="4" fill="#0f172a" stroke="#fbbf24" stroke-width="1" />
+    <text x="80" y="22" text-anchor="middle" fill="#f8fafc" font-size="11" font-weight="600">requirement_debts</text>
+    <text x="80" y="36" text-anchor="middle" fill="#94a3b8" font-size="9">Primary ledger &amp; scores</text>
+
+    <rect x="175" y="0" width="160" height="45" rx="4" fill="#0f172a" stroke="#fbbf24" stroke-width="1" />
+    <text x="255" y="22" text-anchor="middle" fill="#f8fafc" font-size="11" font-weight="600">debt_dependencies</text>
+    <text x="255" y="36" text-anchor="middle" fill="#94a3b8" font-size="9">Directed edge relationships</text>
+
+    <rect x="350" y="0" width="160" height="45" rx="4" fill="#0f172a" stroke="#fbbf24" stroke-width="1" />
+    <text x="430" y="22" text-anchor="middle" fill="#f8fafc" font-size="11" font-weight="600">review_sessions</text>
+    <text x="430" y="36" text-anchor="middle" fill="#94a3b8" font-size="9">Meeting records &amp; ext</text>
+
+    <rect x="525" y="0" width="160" height="45" rx="4" fill="#0f172a" stroke="#fbbf24" stroke-width="1" />
+    <text x="605" y="22" text-anchor="middle" fill="#f8fafc" font-size="11" font-weight="600">release_gates</text>
+    <text x="605" y="36" text-anchor="middle" fill="#94a3b8" font-size="9">Milestone gate criteria</text>
+
+    <rect x="700" y="0" width="160" height="45" rx="4" fill="#0f172a" stroke="#fbbf24" stroke-width="1" />
+    <text x="780" y="22" text-anchor="middle" fill="#f8fafc" font-size="11" font-weight="600">audit_log</text>
+    <text x="780" y="36" text-anchor="middle" fill="#94a3b8" font-size="9">Immutable chronological events</text>
+  </g>
+</svg>

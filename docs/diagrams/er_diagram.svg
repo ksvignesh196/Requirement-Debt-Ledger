@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1020 620" width="1020" height="620" style="background:#0f172a;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#38bdf8" />
+    </marker>
+  </defs>
+
+  <text x="510" y="35" text-anchor="middle" fill="#f8fafc" font-size="20" font-weight="bold">Requirement Debt Ledger - Database ER Diagram</text>
+  <text x="510" y="60" text-anchor="middle" fill="#94a3b8" font-size="13">SQLite Entity Relational Schema with Foreign Keys and Indexes</text>
+
+  <!-- Table: requirement_debts (Centerpiece) -->
+  <g transform="translate(370, 90)">
+    <rect x="0" y="0" width="280" height="490" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="2" />
+    <rect x="0" y="0" width="280" height="32" rx="8" fill="#0284c7" />
+    <text x="140" y="21" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="bold">requirement_debts</text>
+
+    <!-- Fields -->
+    <text x="15" y="55" fill="#38bdf8" font-size="11" font-weight="bold">PK  id : INTEGER</text>
+    <text x="15" y="75" fill="#fbbf24" font-size="11" font-weight="bold">UQ  debt_id : TEXT</text>
+    <text x="15" y="95" fill="#f8fafc" font-size="11">    title : TEXT</text>
+    <text x="15" y="115" fill="#f8fafc" font-size="11">    description : TEXT</text>
+    <text x="15" y="135" fill="#f8fafc" font-size="11">    module : TEXT</text>
+    <text x="15" y="155" fill="#f8fafc" font-size="11">    requirement_type : TEXT</text>
+    <text x="15" y="175" fill="#f8fafc" font-size="11">    deferral_reason : TEXT</text>
+    <text x="15" y="195" fill="#f8fafc" font-size="11">    deferral_phase : TEXT</text>
+    <text x="15" y="215" fill="#f8fafc" font-size="11">    decision_maker : TEXT</text>
+    <text x="15" y="235" fill="#f8fafc" font-size="11">    owner : TEXT</text>
+    <text x="15" y="255" fill="#f8fafc" font-size="11">    target_milestone : TEXT</text>
+    <text x="15" y="275" fill="#f8fafc" font-size="11">    resolution_criteria : TEXT</text>
+    <text x="15" y="295" fill="#f8fafc" font-size="11">    status : TEXT</text>
+    <text x="15" y="315" fill="#f8fafc" font-size="11">    created_date : TEXT (YYYY-MM-DD)</text>
+    <text x="15" y="335" fill="#f8fafc" font-size="11">    review_date : TEXT (YYYY-MM-DD)</text>
+    <text x="15" y="355" fill="#f8fafc" font-size="11">    deadline_date : TEXT (YYYY-MM-DD)</text>
+    <text x="15" y="375" fill="#34d399" font-size="11">    business_impact : INTEGER (1-5)</text>
+    <text x="15" y="395" fill="#34d399" font-size="11">    arch_impact : INTEGER (1-5)</text>
+    <text x="15" y="415" fill="#34d399" font-size="11">    safety_impact : INTEGER (1-5)</text>
+    <text x="15" y="435" fill="#34d399" font-size="11">    occurrence_prob : INTEGER (1-5)</text>
+    <text x="15" y="455" fill="#34d399" font-size="11">    detection_diff : INTEGER (1-5)</text>
+    <text x="15" y="475" fill="#f8fafc" font-size="11">    resolution_type, notes, date</text>
+  </g>
+
+  <!-- Table: debt_dependencies (Left Top) -->
+  <g transform="translate(40, 110)">
+    <rect x="0" y="0" width="260" height="190" rx="8" fill="#1e293b" stroke="#818cf8" stroke-width="1.5" />
+    <rect x="0" y="0" width="260" height="30" rx="8" fill="#4f46e5" />
+    <text x="130" y="20" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="bold">debt_dependencies</text>
+
+    <text x="15" y="55" fill="#818cf8" font-size="11" font-weight="bold">PK  id : INTEGER</text>
+    <text x="15" y="80" fill="#fbbf24" font-size="11">FK  debt_id : TEXT</text>
+    <text x="15" y="105" fill="#fbbf24" font-size="11">FK  depends_on_debt_id : TEXT</text>
+    <text x="15" y="130" fill="#f8fafc" font-size="11">    dependency_type : TEXT</text>
+    <text x="15" y="155" fill="#f8fafc" font-size="11">    notes : TEXT</text>
+    <text x="15" y="175" fill="#f8fafc" font-size="11">    created_at : TEXT</text>
+  </g>
+
+  <!-- Relationship: debt_dependencies -> requirement_debts -->
+  <line x1="300" y1="180" x2="370" y2="180" stroke="#818cf8" stroke-width="2" marker-end="url(#arr)" />
+  <text x="335" y="170" text-anchor="middle" fill="#818cf8" font-size="10">1 : N</text>
+
+  <!-- Table: review_sessions (Right Top) -->
+  <g transform="translate(710, 110)">
+    <rect x="0" y="0" width="260" height="210" rx="8" fill="#1e293b" stroke="#34d399" stroke-width="1.5" />
+    <rect x="0" y="0" width="260" height="30" rx="8" fill="#059669" />
+    <text x="130" y="20" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="bold">review_sessions</text>
+
+    <text x="15" y="55" fill="#34d399" font-size="11" font-weight="bold">PK  id : INTEGER</text>
+    <text x="15" y="80" fill="#fbbf24" font-size="11">FK  debt_id : TEXT</text>
+    <text x="15" y="105" fill="#f8fafc" font-size="11">    review_date : TEXT</text>
+    <text x="15" y="130" fill="#f8fafc" font-size="11">    reviewer_name : TEXT</text>
+    <text x="15" y="155" fill="#f8fafc" font-size="11">    reviewer_role : TEXT</text>
+    <text x="15" y="180" fill="#f8fafc" font-size="11">    outcome : TEXT</text>
+    <text x="15" y="200" fill="#f8fafc" font-size="11">    notes, new_review_date</text>
+  </g>
+
+  <!-- Relationship: review_sessions -> requirement_debts -->
+  <line x1="710" y1="210" x2="650" y2="210" stroke="#34d399" stroke-width="2" marker-end="url(#arr)" />
+  <text x="680" y="200" text-anchor="middle" fill="#34d399" font-size="10">1 : N</text>
+
+  <!-- Table: release_gates (Left Bottom) -->
+  <g transform="translate(40, 360)">
+    <rect x="0" y="0" width="260" height="210" rx="8" fill="#1e293b" stroke="#fbbf24" stroke-width="1.5" />
+    <rect x="0" y="0" width="260" height="30" rx="8" fill="#d97706" />
+    <text x="130" y="20" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="bold">release_gates</text>
+
+    <text x="15" y="55" fill="#fbbf24" font-size="11" font-weight="bold">PK  id : INTEGER</text>
+    <text x="15" y="80" fill="#f8fafc" font-size="11">    gate_name : TEXT</text>
+    <text x="15" y="105" fill="#f8fafc" font-size="11">    target_milestone : TEXT</text>
+    <text x="15" y="130" fill="#f8fafc" font-size="11">    max_critical_debts : INTEGER</text>
+    <text x="15" y="155" fill="#f8fafc" font-size="11">    max_high_debts : INTEGER</text>
+    <text x="15" y="180" fill="#f8fafc" font-size="11">    max_aggregate_risk : REAL</text>
+    <text x="15" y="200" fill="#f8fafc" font-size="11">    status, signoff_by, notes</text>
+  </g>
+
+  <!-- Table: audit_log (Right Bottom) -->
+  <g transform="translate(710, 370)">
+    <rect x="0" y="0" width="260" height="180" rx="8" fill="#1e293b" stroke="#f87171" stroke-width="1.5" />
+    <rect x="0" y="0" width="260" height="30" rx="8" fill="#dc2626" />
+    <text x="130" y="20" text-anchor="middle" fill="#ffffff" font-size="12" font-weight="bold">audit_log</text>
+
+    <text x="15" y="55" fill="#f87171" font-size="11" font-weight="bold">PK  id : INTEGER</text>
+    <text x="15" y="80" fill="#fbbf24" font-size="11">FK  debt_id : TEXT (Nullable)</text>
+    <text x="15" y="105" fill="#f8fafc" font-size="11">    action : TEXT</text>
+    <text x="15" y="130" fill="#f8fafc" font-size="11">    performed_by : TEXT</text>
+    <text x="15" y="155" fill="#f8fafc" font-size="11">    details : TEXT</text>
+    <text x="15" y="175" fill="#f8fafc" font-size="11">    created_at : TEXT</text>
+  </g>
+</svg>

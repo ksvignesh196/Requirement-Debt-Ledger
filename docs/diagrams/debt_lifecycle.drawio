@@ -1,0 +1,60 @@
+<mxfile host="app.diagrams.net" modified="2026-10-16T19:30:00.000Z" agent="Antigravity RDL" version="21.0.0" type="device">
+  <diagram id="rdl-lifecycle" name="Requirement Debt Lifecycle">
+    <mxGraphModel dx="1000" dy="700" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="950" pageHeight="500" background="#0f172a">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        
+        <mxCell id="title" value="Requirement Debt Lifecycle State Machine" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=18;fontStyle=1;fontColor=#f8fafc;" vertex="1" parent="1">
+          <mxGeometry x="250" y="20" width="450" height="30" as="geometry" />
+        </mxCell>
+
+        <!-- States -->
+        <mxCell id="s1" value="IDENTIFIED&#xa;(Postponement Gap)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1e293b;strokeColor=#64748b;fontColor=#f8fafc;strokeWidth=2;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="50" y="140" width="130" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="s2" value="EVALUATED&#xa;(Base Risk R₀ Computed)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1e293b;strokeColor=#38bdf8;fontColor=#f8fafc;strokeWidth=2;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="230" y="140" width="140" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="s3" value="DEFERRED&#xa;(Accrues (1+r)^t Interest)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1e293b;strokeColor=#fbbf24;fontColor=#f8fafc;strokeWidth=2;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="420" y="140" width="150" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="s4" value="UNDER REVIEW&#xa;(Governance Session)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1e293b;strokeColor=#818cf8;fontColor=#f8fafc;strokeWidth=2;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="620" y="140" width="140" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="s5" value="REMEDIATING&#xa;(Active Sprint Work)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#1e293b;strokeColor=#38bdf8;fontColor=#f8fafc;strokeWidth=2;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="800" y="140" width="130" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="s6" value="RESOLVED&#xa;(Verified &amp; Closed)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#064e3b;strokeColor=#34d399;fontColor=#a7f3d0;strokeWidth=2;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="420" y="310" width="150" height="70" as="geometry" />
+        </mxCell>
+        <mxCell id="s7" value="ACCEPTED PERMANENT&#xa;(Formal Risk Exemption)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#451a03;strokeColor=#f97316;fontColor=#fed7aa;strokeWidth=2;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="190" y="310" width="170" height="70" as="geometry" />
+        </mxCell>
+
+        <!-- Transitions -->
+        <mxCell id="t1" value="Assess" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#38bdf8;strokeWidth=2;fontColor=#38bdf8;" edge="1" parent="1" source="s1" target="s2" />
+        <mxCell id="t2" value="Record Deferral" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#38bdf8;strokeWidth=2;fontColor=#38bdf8;" edge="1" parent="1" source="s2" target="s3" />
+        <mxCell id="t3" value="Review Date" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#38bdf8;strokeWidth=2;fontColor=#38bdf8;" edge="1" parent="1" source="s3" target="s4" />
+        <mxCell id="t4" value="Remediate" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;strokeColor=#38bdf8;strokeWidth=2;fontColor=#38bdf8;" edge="1" parent="1" source="s4" target="s5" />
+        <mxCell id="t5" value="Extend Date" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#94a3b8;strokeWidth=1.5;dashed=1;fontColor=#94a3b8;" edge="1" parent="1" source="s4" target="s3">
+          <Array as="points">
+            <mxPoint x="690" y="100" />
+            <mxPoint x="495" y="100" />
+          </Array>
+        </mxCell>
+        <mxCell id="t6" value="Verified &amp; Passed QA" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#34d399;strokeWidth=2;fontColor=#34d399;" edge="1" parent="1" source="s5" target="s6">
+          <Array as="points">
+            <mxPoint x="865" y="345" />
+          </Array>
+        </mxCell>
+        <mxCell id="t7" value="Accept Permanent Risk" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#f87171;strokeWidth=1.5;dashed=1;fontColor=#f87171;" edge="1" parent="1" source="s4" target="s7">
+          <Array as="points">
+            <mxPoint x="690" y="270" />
+            <mxPoint x="275" y="270" />
+          </Array>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

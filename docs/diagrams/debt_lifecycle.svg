@@ -1,0 +1,89 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 950 500" width="950" height="500" style="background:#0f172a;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;">
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#38bdf8" />
+    </marker>
+    <marker id="arr-green" viewBox="0 0 10 10" refX="7" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 1 L 8 5 L 0 9 z" fill="#34d399" />
+    </marker>
+  </defs>
+
+  <text x="475" y="40" text-anchor="middle" fill="#f8fafc" font-size="20" font-weight="bold">Requirement Debt Lifecycle State Machine</text>
+  <text x="475" y="65" text-anchor="middle" fill="#94a3b8" font-size="13">Traceable Formal Transitions from Deferral Inception to Resolution Verification</text>
+
+  <!-- State 1: Identified -->
+  <g transform="translate(60, 160)">
+    <rect x="0" y="0" width="130" height="70" rx="8" fill="#1e293b" stroke="#64748b" stroke-width="2" />
+    <text x="65" y="32" text-anchor="middle" fill="#f8fafc" font-size="13" font-weight="bold">IDENTIFIED</text>
+    <text x="65" y="52" text-anchor="middle" fill="#94a3b8" font-size="10">Gap / Postponement</text>
+  </g>
+
+  <!-- Transition 1 -> 2 -->
+  <line x1="190" y1="195" x2="235" y2="195" stroke="#38bdf8" stroke-width="2" marker-end="url(#arr)" />
+  <text x="212" y="185" text-anchor="middle" fill="#38bdf8" font-size="9">Assess</text>
+
+  <!-- State 2: Evaluated -->
+  <g transform="translate(240, 160)">
+    <rect x="0" y="0" width="130" height="70" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="2" />
+    <text x="65" y="32" text-anchor="middle" fill="#f8fafc" font-size="13" font-weight="bold">EVALUATED</text>
+    <text x="65" y="52" text-anchor="middle" fill="#38bdf8" font-size="10">Base Risk (R₀) Set</text>
+  </g>
+
+  <!-- Transition 2 -> 3 -->
+  <line x1="370" y1="195" x2="415" y2="195" stroke="#38bdf8" stroke-width="2" marker-end="url(#arr)" />
+  <text x="392" y="185" text-anchor="middle" fill="#38bdf8" font-size="9">Formal Defer</text>
+
+  <!-- State 3: Deferred -->
+  <g transform="translate(420, 160)">
+    <rect x="0" y="0" width="140" height="70" rx="8" fill="#1e293b" stroke="#fbbf24" stroke-width="2" />
+    <text x="70" y="32" text-anchor="middle" fill="#f8fafc" font-size="13" font-weight="bold">DEFERRED</text>
+    <text x="70" y="52" text-anchor="middle" fill="#fbbf24" font-size="10">Accrues Interest (1+r)^t</text>
+  </g>
+
+  <!-- Transition 3 -> 4 -->
+  <line x1="560" y1="195" x2="605" y2="195" stroke="#38bdf8" stroke-width="2" marker-end="url(#arr)" />
+  <text x="582" y="185" text-anchor="middle" fill="#38bdf8" font-size="9">Review Date</text>
+
+  <!-- State 4: Under Review -->
+  <g transform="translate(610, 160)">
+    <rect x="0" y="0" width="130" height="70" rx="8" fill="#1e293b" stroke="#818cf8" stroke-width="2" />
+    <text x="65" y="32" text-anchor="middle" fill="#f8fafc" font-size="13" font-weight="bold">UNDER REVIEW</text>
+    <text x="65" y="52" text-anchor="middle" fill="#818cf8" font-size="10">Governance Meeting</text>
+  </g>
+
+  <!-- Self loop / back to deferred -->
+  <path d="M 675 160 C 675 100, 490 100, 490 155" fill="none" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="4" marker-end="url(#arr)" />
+  <text x="580" y="95" text-anchor="middle" fill="#94a3b8" font-size="10">Review Outcome: Extend Review Date</text>
+
+  <!-- Transition 4 -> 5 -->
+  <line x1="740" y1="195" x2="785" y2="195" stroke="#38bdf8" stroke-width="2" marker-end="url(#arr)" />
+  <text x="762" y="185" text-anchor="middle" fill="#38bdf8" font-size="9">Remediate</text>
+
+  <!-- State 5: Remediating -->
+  <g transform="translate(790, 160)">
+    <rect x="0" y="0" width="125" height="70" rx="8" fill="#1e293b" stroke="#38bdf8" stroke-width="2" />
+    <text x="62" y="32" text-anchor="middle" fill="#f8fafc" font-size="12" font-weight="bold">REMEDIATING</text>
+    <text x="62" y="52" text-anchor="middle" fill="#38bdf8" font-size="10">Active Sprint Task</text>
+  </g>
+
+  <!-- Transition 5 -> 6 (Resolved) -->
+  <path d="M 852 230 C 852 350, 750 380, 560 380" fill="none" stroke="#34d399" stroke-width="2" marker-end="url(#arr-green)" />
+  <text x="740" y="370" text-anchor="middle" fill="#34d399" font-size="11" font-weight="600">Verification &amp; Test Suite Passed</text>
+
+  <!-- State 6: Resolved -->
+  <g transform="translate(420, 345)">
+    <rect x="0" y="0" width="140" height="70" rx="8" fill="#064e3b" stroke="#34d399" stroke-width="2" />
+    <text x="70" y="32" text-anchor="middle" fill="#a7f3d0" font-size="13" font-weight="bold">RESOLVED</text>
+    <text x="70" y="52" text-anchor="middle" fill="#a7f3d0" font-size="10">Closed in Ledger</text>
+  </g>
+
+  <!-- Branch: Accepted Permanent Debt -->
+  <path d="M 675 230 C 675 320, 280 320, 280 340" fill="none" stroke="#f87171" stroke-width="1.5" stroke-dasharray="4" marker-end="url(#arr)" />
+  <text x="420" y="310" text-anchor="middle" fill="#f87171" font-size="10">Formal Risk Acceptance Sign-off</text>
+
+  <g transform="translate(200, 345)">
+    <rect x="0" y="0" width="160" height="70" rx="8" fill="#451a03" stroke="#f97316" stroke-width="2" />
+    <text x="80" y="30" text-anchor="middle" fill="#fed7aa" font-size="11" font-weight="bold">ACCEPTED PERMANENT</text>
+    <text x="80" y="50" text-anchor="middle" fill="#fed7aa" font-size="10">Permanent Risk Exemption</text>
+  </g>
+</svg>

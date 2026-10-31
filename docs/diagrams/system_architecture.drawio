@@ -1,0 +1,113 @@
+<mxfile host="app.diagrams.net" modified="2026-10-16T19:30:00.000Z" agent="Antigravity RDL" version="21.0.0" type="device">
+  <diagram id="rdl-arch" name="RDL System Architecture">
+    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1100" pageHeight="850" background="#0f172a">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        
+        <!-- Header -->
+        <mxCell id="title" value="Requirement Debt Ledger (RDL) - System Architecture" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=20;fontStyle=1;fontColor=#f8fafc;" vertex="1" parent="1">
+          <mxGeometry x="250" y="20" width="600" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="subtitle" value="4-Tier Presentation, API Routing, Mathematical Domain Engines, and Persistence" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;fontSize=12;fontColor=#94a3b8;" vertex="1" parent="1">
+          <mxGeometry x="250" y="55" width="600" height="20" as="geometry" />
+        </mxCell>
+
+        <!-- Tier 1: Presentation -->
+        <mxCell id="tier1" value="PRESENTATION TIER (HTML5, CSS3, Vanilla JavaScript SPA)" style="swimlane;whiteSpace=wrap;html=1;fillColor=#1e293b;strokeColor=#38bdf8;fontColor=#f8fafc;strokeWidth=2;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="60" y="90" width="980" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="t1_dash" value="Executive Dashboard&#xa;(SVG Charts &amp; KPIs)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0f172a;strokeColor=#38bdf8;fontColor=#f8fafc;fontSize=11;" vertex="1" parent="tier1">
+          <mxGeometry x="20" y="40" width="160" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="t1_debts" value="Debt Ledger View&#xa;(Filters, Search, Modals)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0f172a;strokeColor=#38bdf8;fontColor=#f8fafc;fontSize=11;" vertex="1" parent="tier1">
+          <mxGeometry x="210" y="40" width="160" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="t1_sim" value="Risk Simulator&#xa;(Interactive Math)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0f172a;strokeColor=#38bdf8;fontColor=#f8fafc;fontSize=11;" vertex="1" parent="tier1">
+          <mxGeometry x="400" y="40" width="160" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="t1_graph" value="Dependency Graph&#xa;(SVG Node-Edge Visualizer)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0f172a;strokeColor=#38bdf8;fontColor=#f8fafc;fontSize=11;" vertex="1" parent="tier1">
+          <mxGeometry x="590" y="40" width="170" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="t1_gate" value="Release Gates View&#xa;(Checklist &amp; Sign-off)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0f172a;strokeColor=#38bdf8;fontColor=#f8fafc;fontSize=11;" vertex="1" parent="tier1">
+          <mxGeometry x="790" y="40" width="160" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- Tier 2: API -->
+        <mxCell id="tier2" value="APPLICATION &amp; ROUTING TIER (Python FastAPI)" style="swimlane;whiteSpace=wrap;html=1;fillColor=#1e293b;strokeColor=#818cf8;fontColor=#f8fafc;strokeWidth=2;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="60" y="240" width="980" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="t2_debts" value="/api/debts&#xa;(CRUD &amp; Resolve)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0f172a;strokeColor=#818cf8;fontColor=#f8fafc;fontSize=11;" vertex="1" parent="tier2">
+          <mxGeometry x="20" y="38" width="140" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="t2_deps" value="/api/dependencies&#xa;(Graph &amp; Cycle Check)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0f172a;strokeColor=#818cf8;fontColor=#f8fafc;fontSize=11;" vertex="1" parent="tier2">
+          <mxGeometry x="180" y="38" width="150" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="t2_rev" value="/api/reviews&#xa;(Review Governance)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0f172a;strokeColor=#818cf8;fontColor=#f8fafc;fontSize=11;" vertex="1" parent="tier2">
+          <mxGeometry x="350" y="38" width="140" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="t2_gates" value="/api/release-gates&#xa;(Readiness Evaluator)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0f172a;strokeColor=#818cf8;fontColor=#f8fafc;fontSize=11;" vertex="1" parent="tier2">
+          <mxGeometry x="510" y="38" width="140" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="t2_analytics" value="/api/analytics&#xa;(Dashboard KPIs)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0f172a;strokeColor=#818cf8;fontColor=#f8fafc;fontSize=11;" vertex="1" parent="tier2">
+          <mxGeometry x="670" y="38" width="130" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="t2_export" value="/api/export&#xa;(CSV, JSON, Reset)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0f172a;strokeColor=#818cf8;fontColor=#f8fafc;fontSize=11;" vertex="1" parent="tier2">
+          <mxGeometry x="820" y="38" width="130" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- Tier 3: Mathematical Domain Services -->
+        <mxCell id="tier3" value="DOMAIN ENGINES &amp; METHODOLOGY SERVICES" style="swimlane;whiteSpace=wrap;html=1;fillColor=#1e293b;strokeColor=#34d399;fontColor=#f8fafc;strokeWidth=2;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="60" y="380" width="980" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="t3_risk" value="Risk Engine&#xa;(Base + (1+r)^t Interest&#xa;+ Overdue Penalties)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0f172a;strokeColor=#34d399;fontColor=#f8fafc;fontSize=11;" vertex="1" parent="tier3">
+          <mxGeometry x="20" y="40" width="170" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="t3_deps" value="Dependency Engine&#xa;(DFS Cycle Detection&#xa;Critical Path &amp; DPI)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0f172a;strokeColor=#34d399;fontColor=#f8fafc;fontSize=11;" vertex="1" parent="tier3">
+          <mxGeometry x="220" y="40" width="170" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="t3_esc" value="Escalation Engine&#xa;(Review Schedules &amp;&#xa;Breach Severity)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0f172a;strokeColor=#34d399;fontColor=#f8fafc;fontSize=11;" vertex="1" parent="tier3">
+          <mxGeometry x="420" y="40" width="170" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="t3_rel" value="Release Evaluator&#xa;(Capacity Gates &amp;&#xa;Policy Violations)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0f172a;strokeColor=#34d399;fontColor=#f8fafc;fontSize=11;" vertex="1" parent="tier3">
+          <mxGeometry x="620" y="40" width="160" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="t3_audit" value="Audit Service&#xa;(Immutable Event Log &amp;&#xa;Traceability)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0f172a;strokeColor=#34d399;fontColor=#f8fafc;fontSize=11;" vertex="1" parent="tier3">
+          <mxGeometry x="800" y="40" width="160" height="60" as="geometry" />
+        </mxCell>
+
+        <!-- Tier 4: Database -->
+        <mxCell id="tier4" value="PERSISTENCE TIER (SQLite 3.50 Persistent Database)" style="swimlane;whiteSpace=wrap;html=1;fillColor=#1e293b;strokeColor=#fbbf24;fontColor=#f8fafc;strokeWidth=2;fontSize=12;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="60" y="530" width="980" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="t4_debts" value="requirement_debts&#xa;(Primary Table)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0f172a;strokeColor=#fbbf24;fontColor=#f8fafc;fontSize=11;" vertex="1" parent="tier4">
+          <mxGeometry x="20" y="38" width="160" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="t4_deps" value="debt_dependencies&#xa;(Edge Graph)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0f172a;strokeColor=#fbbf24;fontColor=#f8fafc;fontSize=11;" vertex="1" parent="tier4">
+          <mxGeometry x="220" y="38" width="160" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="t4_rev" value="review_sessions&#xa;(Meeting History)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0f172a;strokeColor=#fbbf24;fontColor=#f8fafc;fontSize=11;" vertex="1" parent="tier4">
+          <mxGeometry x="420" y="38" width="160" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="t4_gates" value="release_gates&#xa;(Quality Policies)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0f172a;strokeColor=#fbbf24;fontColor=#f8fafc;fontSize=11;" vertex="1" parent="tier4">
+          <mxGeometry x="620" y="38" width="160" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="t4_audit" value="audit_log&#xa;(Event History)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0f172a;strokeColor=#fbbf24;fontColor=#f8fafc;fontSize=11;" vertex="1" parent="tier4">
+          <mxGeometry x="800" y="38" width="160" height="50" as="geometry" />
+        </mxCell>
+
+        <!-- Connecting Arrows -->
+        <mxCell id="edge1" edge="1" parent="1" source="tier1" target="tier2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#38bdf8;strokeWidth=2;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge2" edge="1" parent="1" source="tier2" target="tier3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#818cf8;strokeWidth=2;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="edge3" edge="1" parent="1" source="tier3" target="tier4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#34d399;strokeWidth=2;">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

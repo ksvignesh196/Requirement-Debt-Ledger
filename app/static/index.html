@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <title>Requirement Debt Ledger</title>
+ <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+
+ <!-- Header -->
+ <header>
+  <div class="brand">
+   <div class="brand-icon">RDL</div>
+   <div class="brand-title">
+    <h1>Requirement Debt Ledger</h1>
+    <p>Track deferred requirements, assess risk and manage reviews.</p>
+   </div>
+  </div>
+  <div class="header-actions">
+   <button class="btn btn-sm" id="btn-reset-data" title="Restore the sample records">Reset demo data</button>
+   <a href="/api/export/csv" class="btn btn-sm" download title="Download a CSV copy">Export CSV</a>
+   
+  </div>
+ </header>
+
+ <!-- Navigation Tabs -->
+ <nav class="tab-nav">
+  <button class="tab-btn active" data-tab="dashboard">Dashboard</button>
+  <button class="tab-btn" data-tab="debts">Requirement Ledger</button>
+  <button class="tab-btn" data-tab="recommendations">Recommendations</button>
+  <button class="tab-btn" data-tab="simulator">Planning Tools</button>
+  <button class="tab-btn" data-tab="graph">Dependencies</button>
+  <button class="tab-btn" data-tab="release">Release Readiness</button>
+  <button class="tab-btn" data-tab="audit">Audit Trail</button>
+ </nav>
+
+ <!-- Main Viewports -->
+ <main>
+
+  <!-- Tab 1: Dashboard -->
+  <section id="tab-dashboard" class="tab-content active">
+   <!-- KPI Cards -->
+   <div class="kpi-grid">
+    <div class="kpi-card">
+     <div class="kpi-title">Open requirements</div>
+     <div class="kpi-value" id="kpi-active-debts">0</div>
+     <div class="kpi-subtext">Currently open or under review</div>
+    </div>
+    <div class="kpi-card">
+     <div class="kpi-title">Critical-risk requirements</div>
+     <div class="kpi-value" id="kpi-critical-debts" style="color:var(--critical);">0</div>
+     <div class="kpi-subtext">Dynamic risk score &ge; 85</div>
+    </div>
+    <div class="kpi-card">
+     <div class="kpi-title">Overdue requirements</div>
+     <div class="kpi-value" id="kpi-overdue-debts" style="color:var(--warning);">0</div>
+     <div class="kpi-subtext">Review date or deadline breached</div>
+    </div>
+    <div class="kpi-card">
+     <div class="kpi-title">Total portfolio risk</div>
+     <div class="kpi-value" id="kpi-total-risk" style="color:var(--primary);">0</div>
+     <div class="kpi-subtext">Cumulative dynamic debt points</div>
+    </div>
+    <div class="kpi-card">
+     <div class="kpi-title">Resolved requirements</div>
+     <div class="kpi-value" id="kpi-resolved-debts" style="color:var(--success);">0</div>
+     <div class="kpi-subtext">Verified & formally remediated</div>
+    </div>
+   </div>
+
+   <!-- Charts Grid -->
+   <div class="charts-grid">
+    <div class="chart-card">
+     <h3>Risk Tier Distribution (Active)</h3>
+     <div class="chart-container" id="chart-risk-donut"></div>
+    </div>
+    <div class="chart-card">
+     <h3>Top Deferral Reasons</h3>
+     <div class="chart-container" id="chart-reasons-bar"></div>
+    </div>
+    <div class="chart-card">
+     <h3>Debt Concentration by Module</h3>
+     <div class="chart-container" id="chart-modules-bar"></div>
+    </div>
+   </div>
+
+   <!-- Top Urgent Debts -->
+   <div class="table-container" style="padding:1.25rem;">
+    <h3 style="margin-bottom:1rem;font-size:1.05rem;">Items needing attention</h3>
+    <table>
+     <thead>
+      <tr>
+       <th>ID</th>
+       <th>Requirement Title</th>
+       <th>Risk Tier</th>
+       <th>Escalation</th>
+       <th>DPI Score</th>
+       <th>Action</th>
+      </tr>
+     </thead>
+     <tbody id="top-urgent-tbody"></tbody>
+    </table>
+   </div>
+  </section>
+
+  <!-- Tab 2: Debt Ledger -->
+  <section id="tab-debts" class="tab-content">
+   <!-- Toolbar -->
+   <div class="toolbar">
+    <input type="text" id="debt-search" class="search-input" placeholder="Search by ID, title or keyword...">
+    <select id="filter-module" class="select-filter">
+     <option value="">All Modules</option>
+    </select>
+    <select id="filter-status" class="select-filter">
+     <option value="">All Statuses</option>
+     <option value="Deferred">Deferred</option>
+     <option value="Under Review">Under Review</option>
+     <option value="Remediating">Remediating</option>
+     <option value="Resolved">Resolved</option>
+    </select>
+    <select id="filter-risk-tier" class="select-filter">
+     <option value="">All Risk Tiers</option>
+     <option value="Critical">Critical (&ge; 85)</option>
+     <option value="High">High (65-84)</option>
+     <option value="Moderate">Moderate (35-64)</option>
+     <option value="Low">Low (&lt; 35)</option>
+    </select>
+    <select id="filter-escalation" class="select-filter">
+     <option value="">All Escalation States</option>
+     <option value="CRITICAL_BREACH">Critical Breach</option>
+     <option value="OVERDUE_REVIEW">Overdue Review</option>
+     <option value="UPCOMING_REVIEW">Upcoming Review</option>
+     <option value="OK">Healthy (OK)</option>
+    </select>
+    <select id="sort-by" class="select-filter">
+     <option value="debt_priority_index">Sort: Priority Index (DPI)</option>
+     <option value="dynamic_risk_score">Sort: Dynamic Risk Score</option>
+     <option value="days_to_review">Sort: Review Urgency</option>
+     <option value="created_date">Sort: Creation Date</option>
+    </select>
+    <button class="btn btn-primary" onclick="DebtsView.openCreateModal()">+ Record Deferred Requirement</button>
+   </div>
+
+   <!-- Table -->
+   <div class="table-container">
+    <table>
+     <thead>
+      <tr>
+       <th>Debt ID</th>
+       <th>Requirement & Module</th>
+       <th>Status</th>
+       <th>Dynamic Risk</th>
+       <th>Escalation</th>
+       <th>Downstream Impact</th>
+       <th>Effort</th>
+       <th>Priority (DPI)</th>
+       <th>Governance Actions</th>
+      </tr>
+     </thead>
+     <tbody id="debts-tbody"></tbody>
+    </table>
+   </div>
+  </section>
+
+  <!-- Tab: Resolution Recommendations -->
+  <section id="tab-recommendations" class="tab-content">
+   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;flex-wrap:wrap;gap:1rem;">
+    <div>
+     <h2>Recommended Actions</h2>
+     <p style="color:var(--text-secondary);font-size:0.85rem;">
+      Suggested order based on risk, dependencies, urgency and estimated effort.
+     </p>
+    </div>
+    <div style="display:flex;gap:0.75rem;align-items:center;">
+     <select id="rec-filter-milestone" class="select-filter">
+      <option value="">All Project Milestones</option>
+     </select>
+     <button class="btn btn-primary" onclick="RecommendationView.openPairwiseModal()">Compare priorities</button>
+    </div>
+   </div>
+
+   <div id="rec-weights-banner"></div>
+
+   <div id="recommendations-list"></div>
+  </section>
+
+  <!-- Tab 3: Simulation & Forecasting Suite -->
+  <section id="tab-simulator" class="tab-content">
+   <div style="margin-bottom:1.25rem;">
+    <h2>Planning Tools</h2>
+    <p style="color:var(--text-secondary);font-size:0.85rem;">
+     Explore how delays affect dependent requirements, compare resolution plans and estimate how risk may change over time.
+    </p>
+   </div>
+
+   <!-- Sub-Navigation Pills -->
+   <div class="sim-subnav">
+    <button class="sim-subnav-btn active" data-subview="dep-sim">Dependency impact</button>
+    <button class="sim-subnav-btn" data-subview="what-if">Compare release plans</button>
+    <button class="sim-subnav-btn" data-subview="forecast">Risk forecast</button>
+    <button class="sim-subnav-btn" data-subview="calculator">Risk calculator</button>
+   </div>
+
+   <!-- Sub-View 1: Dependency Impact Simulator -->
+   <div id="sim-panel-dep-sim" class="sim-subview-panel active">
+    <div style="background:var(--bg-surface);padding:1.25rem;border-radius:var(--radius);border:1px solid var(--border-color);margin-bottom:1.5rem;">
+     <h3 style="font-size:1rem;color:var(--primary);margin-bottom:0.75rem;">Check the effect of a delay</h3>
+     <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:1.25rem;">
+      Select a requirement and a delay period to see which other requirements may be affected.
+     </p>
+
+     <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:1.25rem;align-items:end;">
+      <div class="form-group" style="margin-bottom:0;">
+       <label>Requirement</label>
+       <select id="dep-sim-debt-select" class="form-control"></select>
+      </div>
+
+      <div class="form-group" style="margin-bottom:0;">
+       <div style="display:flex;justify-content:space-between;font-size:0.85rem;margin-bottom:0.25rem;">
+        <label style="margin-bottom:0;">Additional delay</label>
+        <strong id="dep-sim-delay-val" style="color:var(--primary);">30 days</strong>
+       </div>
+       <input type="range" id="dep-sim-delay-slider" class="slider-input" min="5" max="180" step="5" value="30" aria-describedby="dep-sim-auto-note">
+      </div>
+     </div>
+     <p id="dep-sim-auto-note" style="font-size:0.8rem;color:var(--text-muted);margin:0.9rem 0 0;">
+      Results update automatically when you change the requirement or delay.
+     </p>
+    </div>
+
+    <div id="dep-sim-results" aria-live="polite">
+     <div style="text-align:center;padding:3rem;color:var(--text-muted);background:var(--bg-card);border-radius:var(--radius);border:1px dashed var(--border-color);">
+      Select a requirement and adjust the delay to view the results.
+     </div>
+    </div>
+   </div>
+
+   <!-- Sub-View 2: What-If Release Planning Sandbox -->
+   <div id="sim-panel-what-if" class="sim-subview-panel">
+    <div style="background:var(--bg-surface);padding:1.25rem;border-radius:var(--radius);border:1px solid var(--border-color);margin-bottom:1.5rem;">
+     <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;">
+      <div>
+       <h3 style="font-size:1rem;color:var(--accent);margin-bottom:0.25rem;">Compare resolution plans</h3>
+       <p style="font-size:0.85rem;color:var(--text-secondary);">
+        Compare different ways of resolving requirements based on risk reduction and available team effort.
+       </p>
+      </div>
+      <div style="display:flex;gap:0.75rem;align-items:center;">
+       <label for="whatif-milestone-select" style="font-size:0.85rem;color:var(--text-secondary);">Release milestone</label>
+       <select id="whatif-milestone-select" class="select-filter">
+        <option value="">Select a milestone</option>
+       </select>
+      </div>
+     </div>
+    </div>
+
+    <div id="whatif-results-container"></div>
+   </div>
+
+   <!-- Sub-View 3: Risk Forecasting & Sensitivity -->
+   <div id="sim-panel-forecast" class="sim-subview-panel">
+    <div style="background:var(--bg-surface);padding:1.25rem;border-radius:var(--radius);border:1px solid var(--border-color);margin-bottom:1.5rem;">
+     <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:1rem;">
+      <div>
+       <h3 style="font-size:1rem;color:var(--warning);margin-bottom:0.25rem;">Risk forecast</h3>
+       <p style="font-size:0.85rem;color:var(--text-secondary);">
+        Estimate how requirement risk may change over time using different daily rates.
+       </p>
+      </div>
+      <div style="display:flex;gap:0.5rem;align-items:center;flex-wrap:wrap;">
+       <span style="font-size:0.8rem;color:var(--text-secondary);">Daily rate:</span>
+       <button class="rate-sensitivity-btn" data-rate="0.004" type="button" aria-pressed="false">0.4% / day (Mild)</button>
+       <button class="rate-sensitivity-btn active" data-rate="0.008" type="button" aria-pressed="true">0.8% / day (Standard)</button>
+       <button class="rate-sensitivity-btn" data-rate="0.012" type="button" aria-pressed="false">1.2% / day (High)</button>
+      </div>
+      <p style="font-size:0.8rem;color:var(--text-muted);margin-top:0.75rem;">
+       The forecast updates automatically when you select a daily rate.
+      </p>
+     </div>
+    </div>
+
+    <div id="forecast-results-container"></div>
+   </div>
+
+   <!-- Sub-View 4: Single-Item Dynamic Risk Calculator -->
+   <div id="sim-panel-calculator" class="sim-subview-panel">
+    <div class="sim-container">
+     <!-- Controls Column -->
+     <div style="background:var(--bg-surface);padding:1.5rem;border-radius:var(--radius);border:1px solid var(--border-color);">
+      <h3 style="margin-bottom:1.25rem;font-size:1rem;color:var(--primary);">Risk and time settings</h3>
+
+      <div class="slider-group">
+       <div class="slider-header">
+        <span>Business Value Impact (w=0.35)</span>
+        <strong id="sim-biz-val">3</strong>
+       </div>
+       <input type="range" id="sim-biz" class="slider-input" min="1" max="5" value="3">
+      </div>
+
+      <div class="slider-group">
+       <div class="slider-header">
+        <span>Architecture / Structural Impact (w=0.35)</span>
+        <strong id="sim-arch-val">3</strong>
+       </div>
+       <input type="range" id="sim-arch" class="slider-input" min="1" max="5" value="3">
+      </div>
+
+      <div class="slider-group">
+       <div class="slider-header">
+        <span>Safety & Compliance Impact (w=0.30)</span>
+        <strong id="sim-safe-val">3</strong>
+       </div>
+       <input type="range" id="sim-safe" class="slider-input" min="1" max="5" value="3">
+      </div>
+
+      <div class="slider-group">
+       <div class="slider-header">
+        <span>Occurrence / Defect Probability</span>
+        <strong id="sim-occ-val">3</strong>
+       </div>
+       <input type="range" id="sim-occ" class="slider-input" min="1" max="5" value="3">
+      </div>
+
+      <div class="slider-group">
+       <div class="slider-header">
+        <span>Detection Difficulty / Invisibility</span>
+        <strong id="sim-det-val">3</strong>
+       </div>
+       <input type="range" id="sim-det" class="slider-input" min="1" max="5" value="3">
+      </div>
+
+      <div class="slider-group" style="margin-top:1.5rem;border-top:1px solid var(--border-color);padding-top:1rem;">
+       <div class="slider-header">
+        <span>Elapsed Days Since Deferral (Grace Period: 14d)</span>
+        <strong id="sim-days-val">28</strong>
+       </div>
+       <input type="range" id="sim-days" class="slider-input" min="0" max="120" value="28">
+      </div>
+
+      <div class="slider-group">
+       <div class="slider-header">
+        <span>Review Schedule Overdue Days (Overdue Penalty)</span>
+        <strong id="sim-overdue-val">5</strong>
+       </div>
+       <input type="range" id="sim-overdue" class="slider-input" min="-30" max="60" value="5">
+      </div>
+     </div>
+
+     <!-- Real-time Result & Mathematical Derivation -->
+     <div>
+      <div class="risk-meter-box">
+       <div style="font-size:0.85rem;color:var(--text-secondary);text-transform:uppercase;letter-spacing:0.05em;">Effective Dynamic Risk Score</div>
+       <div class="risk-meter-score" id="sim-result-score">52.4</div>
+       <div><span class="badge" id="sim-result-tier">Moderate</span></div>
+      </div>
+
+      <div class="formula-card">
+       <h3 style="color:var(--primary);margin-bottom:0.75rem;font-size:0.95rem;">Step-by-Step Mathematical Derivation</h3>
+       <div class="formula-step" id="sim-step-base"></div>
+       <div class="formula-step" id="sim-step-interest"></div>
+       <div class="formula-step" id="sim-step-overdue"></div>
+       <div class="formula-step" id="sim-step-final"></div>
+      </div>
+     </div>
+    </div>
+   </div>
+  </section>
+
+  <!-- Tab 4: Dependency Graph -->
+  <section id="tab-graph" class="tab-content">
+   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;flex-wrap:wrap;gap:1rem;">
+    <div>
+     <h2>Requirement Dependencies</h2>
+     <p style="color:var(--text-secondary);font-size:0.85rem;">
+      View linked requirements and see which items are blocked by others.
+     </p>
+    </div>
+    <div style="display:flex;gap:0.75rem;">
+     <button class="btn btn-primary" id="btn-add-dep">+ Add dependency</button>
+    </div>
+   </div>
+
+   <div id="graph-cycle-alert" style="display:none;background:#fff5f4;border:1px solid #efc7c4;color:#a42b24;padding:0.75rem 1rem;border-radius:var(--radius);margin-bottom:1rem;font-size:0.85rem;"></div>
+
+   <div id="graph-canvas-container">
+    <svg id="graph-svg"></svg>
+   </div>
+
+   <!-- Selected Node Details -->
+   <div id="graph-node-details" style="margin-top:1rem;">
+    <div style="color:var(--text-muted);font-size:0.85rem;font-style:italic;">
+     Click on any requirement node above to inspect its blocked downstream requirements, prerequisites, and metrics.
+    </div>
+   </div>
+  </section>
+
+  <!-- Tab 5: Release Readiness Gates -->
+  <section id="tab-release" class="tab-content">
+   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem;">
+    <div>
+     <h2>Release readiness</h2>
+     <p style="color:var(--text-secondary);font-size:0.85rem;">
+      Check whether a release meets the selected risk limits.
+     </p>
+    </div>
+    <button class="btn btn-primary" id="btn-new-gate">+ Define Release Gate</button>
+   </div>
+
+   <div id="release-gates-list"></div>
+  </section>
+
+  <!-- Tab 6: Audit Trail -->
+  <section id="tab-audit" class="tab-content">
+   <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem;flex-wrap:wrap;gap:1rem;">
+    <div>
+     <h2>Audit history</h2>
+     <p style="color:var(--text-secondary);font-size:0.85rem;">
+      A record of requirement changes, reviews, risk updates and resolutions.
+     </p>
+    </div>
+    <div style="display:flex;gap:0.5rem;">
+     <button class="btn btn-sm btn-primary" id="btn-verify-audit">Verify audit history</button>
+     <button class="btn btn-sm" id="btn-refresh-audit">Refresh history</button>
+    </div>
+   </div>
+
+   <div id="audit-verification-status" style="margin-bottom:1.25rem;"></div>
+
+   <div class="table-container">
+    <table>
+     <thead>
+      <tr>
+       <th>Timestamp</th>
+       <th>Debt Item</th>
+       <th>Action</th>
+       <th>Actor</th>
+       <th>Event Details & Rationale</th>
+       <th>Block Hash (SHA-256)</th>
+      </tr>
+     </thead>
+     <tbody id="audit-tbody"></tbody>
+    </table>
+   </div>
+  </section>
+
+ <!-- Modals -->
+
+ <!-- Modal: Create Debt -->
+ <div class="modal-overlay" id="modal-create">
+  <div class="modal">
+   <div class="modal-header">
+    <h2>Record Deferred Requirement Debt</h2>
+    <button class="modal-close" data-close="modal-create">&times;</button>
+   </div>
+   <form id="form-create-debt">
+    <div class="modal-body">
+     <div class="form-grid">
+      <div class="form-group full-width">
+       <label>Requirement Title *</label>
+       <input type="text" id="create-title" class="form-control" required placeholder="e.g. Distributed Idempotency Layer for Payment Retries">
+      </div>
+
+      <div class="form-group full-width">
+       <label>Requirement Description & Deferral Context *</label>
+       <textarea id="create-description" class="form-control" required placeholder="Describe what the requirement is and why it cannot be immediately integrated..."></textarea>
+      </div>
+
+      <div class="form-group">
+       <label>Module / Subsystem *</label>
+       <input type="text" id="create-module" class="form-control" required placeholder="e.g. Payment Gateway, Auth & Identity">
+      </div>
+
+      <div class="form-group">
+       <label>Requirement Type *</label>
+       <select id="create-type" class="form-control">
+        <option value="Functional">Functional</option>
+        <option value="Architectural">Architectural</option>
+        <option value="Security">Security</option>
+        <option value="Compliance">Compliance</option>
+        <option value="Performance">Performance</option>
+        <option value="Non-Functional">Non-Functional</option>
+       </select>
+      </div>
+
+      <div class="form-group">
+       <label>Deferral Reason Taxonomy *</label>
+       <select id="create-reason" class="form-control">
+        <option value="Time Constraint / Scope Reduction">Time Constraint / Scope Reduction</option>
+        <option value="Technical Uncertainty">Technical Uncertainty</option>
+        <option value="Third-Party Dependency">Third-Party Dependency</option>
+        <option value="Budget / Resource Limitation">Budget / Resource Limitation</option>
+        <option value="Incomplete Specification">Incomplete Specification</option>
+        <option value="Architectural Redesign">Architectural Redesign</option>
+       </select>
+      </div>
+
+      <div class="form-group">
+       <label>Deferral Phase *</label>
+       <select id="create-phase" class="form-control">
+        <option value="Inception">Inception</option>
+        <option value="Sprint Planning">Sprint Planning</option>
+        <option value="Architecture">Architecture</option>
+        <option value="Development">Development</option>
+        <option value="QA/Testing">QA/Testing</option>
+       </select>
+      </div>
+
+      <div class="form-group">
+       <label>Decision Maker (Role & Name) *</label>
+       <input type="text" id="create-decision-maker" class="form-control" required placeholder="e.g. Lead Architect (P. Sharma)">
+      </div>
+
+      <div class="form-group">
+       <label>Owner Squad / Team *</label>
+       <input type="text" id="create-owner" class="form-control" required placeholder="e.g. Payment Squad">
+      </div>
+
+      <div class="form-group">
+       <label>Target Resolution Milestone *</label>
+       <input type="text" id="create-milestone" class="form-control" required placeholder="e.g. Release 1.0, Release 2.0">
+      </div>
+
+      <div class="form-group full-width">
+       <label>Concrete Resolution Criteria *</label>
+       <textarea id="create-resolution-criteria" class="form-control" required placeholder="Explicit conditions and tests required to close this debt..."></textarea>
+      </div>
+
+      <div class="form-group">
+       <label>Deferral Created Date</label>
+       <input type="date" id="create-created-date" class="form-control" required>
+      </div>
+
+      <div class="form-group">
+       <label>Scheduled Review Date</label>
+       <input type="date" id="create-review-date" class="form-control" required>
+      </div>
+
+      <div class="form-group">
+       <label>Target Resolution Deadline</label>
+       <input type="date" id="create-deadline-date" class="form-control" required>
+      </div>
+
+      <!-- Risk Dimensions -->
+      <div class="form-group">
+       <label>Business Impact (1-5)</label>
+       <select id="create-business-impact" class="form-control">
+        <option value="1">1 - Negligible</option>
+        <option value="2">2 - Minor</option>
+        <option value="3" selected>3 - Moderate</option>
+        <option value="4">4 - Significant</option>
+        <option value="5">5 - Critical</option>
+       </select>
+      </div>
+
+      <div class="form-group">
+       <label>Architecture Impact (1-5)</label>
+       <select id="create-arch-impact" class="form-control">
+        <option value="1">1 - Negligible</option>
+        <option value="2">2 - Minor</option>
+        <option value="3" selected>3 - Moderate</option>
+        <option value="4">4 - Significant</option>
+        <option value="5">5 - Critical</option>
+       </select>
+      </div>
+
+      <div class="form-group">
+       <label>Safety & Compliance Impact (1-5)</label>
+       <select id="create-safety-impact" class="form-control">
+        <option value="1">1 - Negligible</option>
+        <option value="2">2 - Minor</option>
+        <option value="3" selected>3 - Moderate</option>
+        <option value="4">4 - Significant</option>
+        <option value="5">5 - Critical</option>
+       </select>
+      </div>
+
+      <div class="form-group">
+       <label>Occurrence / Defect Likelihood (1-5)</label>
+       <select id="create-occurrence-prob" class="form-control">
+        <option value="1">1 - Rare</option>
+        <option value="2">2 - Unlikely</option>
+        <option value="3" selected>3 - Moderate</option>
+        <option value="4">4 - Likely</option>
+        <option value="5">5 - Almost Certain</option>
+       </select>
+      </div>
+
+      <div class="form-group">
+       <label>Detection Difficulty / Invisibility (1-5)</label>
+       <select id="create-detection-difficulty" class="form-control">
+        <option value="1">1 - Obvious / Detected by Unit Tests</option>
+        <option value="2">2 - Caught in Integration Tests</option>
+        <option value="3" selected>3 - Caught in Staging QA</option>
+        <option value="4">4 - Hidden until High Load</option>
+        <option value="5">5 - Completely Invisible until Production Failure</option>
+       </select>
+      </div>
+
+      <div class="form-group">
+       <label>Cost of Delay (1-5)</label>
+       <select id="create-cost-of-delay" class="form-control">
+        <option value="1">1 - Minimal</option>
+        <option value="2">2 - Low</option>
+        <option value="3" selected>3 - Moderate</option>
+        <option value="4">4 - High</option>
+        <option value="5">5 - Extreme</option>
+       </select>
+      </div>
+
+      <div class="form-group">
+       <label>Estimated Resolution Effort (Story Points 1-100) *</label>
+       <input type="number" id="create-effort" class="form-control" min="1" max="100" value="8" required placeholder="Story points (e.g. 5, 8, 13)">
+      </div>
+     </div>
+    </div>
+    <div class="modal-footer">
+     <button type="button" class="btn" data-close="modal-create">Cancel</button>
+     <button type="submit" class="btn btn-primary">Save Deferred Requirement</button>
+    </div>
+   </form>
+  </div>
+ </div>
+
+ <!-- Modal: Debt Details & Risk Explanation -->
+ <div class="modal-overlay" id="modal-detail">
+  <div class="modal">
+   <div class="modal-header">
+    <h2 id="modal-detail-title">Requirement details</h2>
+    <button class="modal-close" data-close="modal-detail">&times;</button>
+   </div>
+   <div class="modal-body" id="modal-detail-body"></div>
+   <div class="modal-footer">
+    <button type="button" class="btn" data-close="modal-detail">Close</button>
+   </div>
+  </div>
+ </div>
+
+ <!-- Modal: Conduct Review -->
+ <div class="modal-overlay" id="modal-review">
+  <div class="modal">
+   <div class="modal-header">
+    <h2 id="modal-review-title">Record a review</h2>
+    <button class="modal-close" data-close="modal-review">&times;</button>
+   </div>
+   <form id="form-review-debt">
+    <input type="hidden" id="review-debt-id">
+    <div class="modal-body">
+     <div class="form-grid">
+      <div class="form-group">
+       <label>Review Date</label>
+       <input type="date" id="review-date-input" class="form-control" required>
+      </div>
+
+      <div class="form-group">
+       <label>Reviewer Name *</label>
+       <input type="text" id="review-name" class="form-control" required placeholder="e.g. Lead Architect">
+      </div>
+
+      <div class="form-group">
+       <label>Reviewer Role *</label>
+       <input type="text" id="review-role" class="form-control" required placeholder="e.g. Technical Steering Committee">
+      </div>
+
+      <div class="form-group">
+       <label>Review Outcome *</label>
+       <select id="review-outcome" class="form-control" required>
+        <option value="Retain Debt">Retain Debt (Under Observation)</option>
+        <option value="Extend Review Date">Extend Review Date</option>
+        <option value="Escalate Priority">Escalate Priority</option>
+        <option value="Initiate Remediation">Initiate Remediation (Move to Remediating)</option>
+        <option value="Accept Risk Permanently">Accept Risk Permanently</option>
+       </select>
+      </div>
+
+      <div class="form-group full-width">
+       <label>New Review Date (if extending)</label>
+       <input type="date" id="review-new-date" class="form-control">
+      </div>
+
+      <div class="form-group full-width">
+       <label>Review Session Minutes & Technical Notes *</label>
+       <textarea id="review-notes" class="form-control" required placeholder="Detail discussion, technical constraints, team capacity, and action items..."></textarea>
+      </div>
+     </div>
+    </div>
+    <div class="modal-footer">
+     <button type="button" class="btn" data-close="modal-review">Cancel</button>
+     <button type="submit" class="btn btn-primary">Record Review Decision</button>
+    </div>
+   </form>
+  </div>
+ </div>
+
+ <!-- Modal: Resolve Debt -->
+ <div class="modal-overlay" id="modal-resolve">
+  <div class="modal">
+   <div class="modal-header">
+    <h2 id="modal-resolve-title">Resolve requirement</h2>
+    <button class="modal-close" data-close="modal-resolve">&times;</button>
+   </div>
+   <form id="form-resolve-debt">
+    <input type="hidden" id="resolve-debt-id">
+    <div class="modal-body">
+     <div class="form-group">
+      <label>Resolution Verification Type *</label>
+      <select id="resolve-type" class="form-control" required>
+       <option value="Implemented & Verified">Implemented & Verified (Code & Test Suite Complete)</option>
+       <option value="Absorbed into Redesign">Absorbed into Redesign (Superseded by Architecture)</option>
+       <option value="Transferred to Technical Debt">Transferred to Technical Debt (Refactored at Code Level)</option>
+       <option value="Risk Formally Accepted">Risk Formally Accepted (Sign-off by Governance)</option>
+      </select>
+     </div>
+
+     <div class="form-group">
+      <label>Verified By (Engineer / Sign-off Role) *</label>
+      <input type="text" id="resolve-by" class="form-control" required placeholder="e.g. QA Lead / Principal Architect">
+     </div>
+
+     <div class="form-group">
+      <label>Resolution Verification Notes & Evidence Links *</label>
+      <textarea id="resolve-notes" class="form-control" required placeholder="Document PR link, test run results, or architectural verification evidence proving resolution..."></textarea>
+     </div>
+    </div>
+    <div class="modal-footer">
+     <button type="button" class="btn" data-close="modal-resolve">Cancel</button>
+     <button type="submit" class="btn btn-success">Verify & Close Debt</button>
+    </div>
+   </form>
+  </div>
+ </div>
+
+ <!-- Modal: Add Dependency -->
+ <div class="modal-overlay" id="modal-add-dep">
+  <div class="modal">
+   <div class="modal-header">
+    <h2>Add dependency</h2>
+    <button class="modal-close" data-close="modal-add-dep">&times;</button>
+   </div>
+   <form id="form-add-dep">
+    <div class="modal-body">
+     <div class="form-group">
+      <label>Dependent Requirement (The one that requires prerequisites) *</label>
+      <select id="dep-dependent-id" class="form-control" required></select>
+     </div>
+
+     <div class="form-group">
+      <label>Depends On / Blocked By (The prerequisite requirement) *</label>
+      <select id="dep-blocker-id" class="form-control" required></select>
+     </div>
+
+     <div class="form-group">
+      <label>Dependency Type *</label>
+      <select id="dep-type" class="form-control">
+       <option value="Blocks">Blocks (Hard Functional Dependency)</option>
+       <option value="Architectural Precondition">Architectural Precondition</option>
+       <option value="Data Dependency">Data Dependency (Schema/Database)</option>
+      </select>
+     </div>
+
+     <div class="form-group">
+      <label>Dependency Rationale Notes</label>
+      <input type="text" id="dep-notes" class="form-control" placeholder="e.g. Redis redlock is prerequisite for automated reconciliation">
+     </div>
+    </div>
+    <div class="modal-footer">
+     <button type="button" class="btn" data-close="modal-add-dep">Cancel</button>
+     <button type="submit" class="btn btn-primary">Save Dependency Link</button>
+    </div>
+   </form>
+  </div>
+ </div>
+
+ <!-- Modal: Create Release Gate -->
+ <div class="modal-overlay" id="modal-create-gate">
+  <div class="modal">
+   <div class="modal-header">
+    <h2>Define Release Readiness Gate</h2>
+    <button class="modal-close" data-close="modal-create-gate">&times;</button>
+   </div>
+   <form id="form-create-gate">
+    <div class="modal-body">
+     <div class="form-group">
+      <label>Gate Name *</label>
+      <input type="text" id="gate-name-input" class="form-control" required placeholder="e.g. Release 1.0 Production GA Gate">
+     </div>
+
+     <div class="form-group">
+      <label>Target Milestone *</label>
+      <input type="text" id="gate-milestone-input" class="form-control" required placeholder="e.g. Release 1.0, Release 2.0">
+     </div>
+
+     <div class="form-group">
+      <label>Max Allowed Critical Debts</label>
+      <input type="number" id="gate-max-critical" class="form-control" value="0" min="0">
+     </div>
+
+     <div class="form-group">
+      <label>Max Allowed High Risk Debts</label>
+      <input type="number" id="gate-max-high" class="form-control" value="1" min="0">
+     </div>
+
+     <div class="form-group">
+      <label>Max Aggregate Portfolio Debt Tolerance Score</label>
+      <input type="number" id="gate-max-risk" class="form-control" value="150" min="0" step="10">
+     </div>
+    </div>
+    <div class="modal-footer">
+     <button type="button" class="btn" data-close="modal-create-gate">Cancel</button>
+     <button type="submit" class="btn btn-primary">Save Release Gate</button>
+    </div>
+   </form>
+  </div>
+ </div>
+
+ <!-- Modal: Sign-Off Gate -->
+ <div class="modal-overlay" id="modal-signoff-gate">
+  <div class="modal">
+   <div class="modal-header">
+    <h2 id="modal-signoff-title">Release sign-off</h2>
+    <button class="modal-close" data-close="modal-signoff-gate">&times;</button>
+   </div>
+   <form id="form-signoff-gate">
+    <input type="hidden" id="signoff-gate-id">
+    <div class="modal-body">
+     <div class="form-group">
+      <label>Signing Authority (Name & Role) *</label>
+      <input type="text" id="signoff-by-input" class="form-control" required placeholder="e.g. Release Engineering Director (M. Jenkins)">
+     </div>
+
+     <div class="form-group">
+      <label>Sign-Off Rationale / Conditional Risk Acceptance Notes *</label>
+      <textarea id="signoff-notes-input" class="form-control" required placeholder="State technical justifications, contingency monitoring plans, or rollback protocols..."></textarea>
+     </div>
+    </div>
+    <div class="modal-footer">
+     <button type="button" class="btn" data-close="modal-signoff-gate">Cancel</button>
+     <button type="submit" class="btn btn-success">Confirm Formal Sign-Off</button>
+    </div>
+   </form>
+  </div>
+ </div>
+
+ <!-- Modal: Pairwise Contrast Tool -->
+ <div class="modal-overlay" id="modal-pairwise">
+  <div class="modal" style="max-width:800px;">
+   <div class="modal-header">
+    <h2>Compare priorities</h2>
+    <button class="modal-close" data-close="modal-pairwise">&times;</button>
+   </div>
+   <div class="modal-body">
+    <p style="font-size:0.85rem;color:var(--text-secondary);margin-bottom:1.25rem;">
+     Select two requirements to compare their risk, dependencies, urgency and estimated effort.
+    </p>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1.25rem;">
+     <div class="form-group" style="margin-bottom:0;">
+      <label>Candidate Requirement Debt A</label>
+      <select id="pairwise-debt-a" class="form-control"></select>
+     </div>
+     <div class="form-group" style="margin-bottom:0;">
+      <label>Comparison Requirement Debt B</label>
+      <select id="pairwise-debt-b" class="form-control"></select>
+     </div>
+    </div>
+
+    <div style="margin-bottom:1.25rem;">
+     <button class="btn btn-primary" id="btn-run-pairwise-compare" style="width:100%;">
+      Compare requirements
+     </button>
+    </div>
+
+    <div id="pairwise-comparison-result">
+     <div style="text-align:center;padding:2rem;color:var(--text-muted);background:var(--bg-card);border-radius:var(--radius);border:1px dashed var(--border-color);">
+      Select two requirements above and compare them.
+     </div>
+    </div>
+   </div>
+   <div class="modal-footer">
+    <button type="button" class="btn" data-close="modal-pairwise">Close</button>
+   </div>
+  </div>
+ </div>
+
+ <!-- Toast Container -->
+ <div id="toast-container"></div>
+
+ <!-- Scripts -->
+ <script src="/static/js/api.js"></script>
+ <script src="/static/js/dashboard.js"></script>
+ <script src="/static/js/debts.js"></script>
+ <script src="/static/js/risk_calculator.js"></script>
+ <script src="/static/js/graph_view.js"></script>
+ <script src="/static/js/release_view.js"></script>
+ <script src="/static/js/recommendation_view.js"></script>
+ <script src="/static/js/simulation_view.js"></script>
+ <script src="/static/js/app.js"></script>
+</body>
+</html>
